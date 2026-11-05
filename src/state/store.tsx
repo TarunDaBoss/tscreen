@@ -20,6 +20,8 @@ export const TEMP_MAX = 90
 
 export interface State {
   screen: ScreenId
+  /** last screen shown inside the Control Panel area (kept while animating out to Home) */
+  lastInside: Exclude<ScreenId, 'home'>
   /** id of the element that opened the current screen, focused again on return */
   returnFocus: string | null
   /** id of the Control Panel control that opened the current detail screen */
@@ -35,9 +37,37 @@ export interface State {
   sceneMinutes: number
 }
 
+const SCREENS: ScreenId[] = [
+  'home', 'panel', 'thermo-downstairs', 'thermo-upstairs', 'thermo-basement',
+  'security', 'appliances', 'cameras', 'locks',
+]
+
+/**
+ * Optional deep links, handy for embedding one screen in a case study:
+ *   ?screen=security  ?time=22:00  ?goodnight=1
+ */
+function fromUrl(base: State): State {
+  if (typeof window === 'undefined') return base
+  const q = new URLSearchParams(window.location.search)
+  let s = base
+  const screen = q.get('screen') as ScreenId | null
+  if (screen && SCREENS.includes(screen)) {
+    s = { ...s, screen, lastInside: screen === 'home' ? 'panel' : screen }
+  }
+  const time = q.get('time')?.match(/^(\d{1,2}):(\d{2})$/)
+  if (time) {
+    let m = Number(time[1]) * 60 + Number(time[2])
+    if (m < SLIDER_MIN) m += 24 * 60
+    s = { ...s, sceneMinutes: clamp(m, SLIDER_MIN, SLIDER_MAX) }
+  }
+  if (q.get('goodnight') === '1') s = reducer(s, { type: 'toggleGoodnight' })
+  return s
+}
+
 // Starting state = the base "Control Panels Screen" frame of the design.
-export const initialState = (): State => ({
+export const initialState = (): State => fromUrl({
   screen: 'home',
+  lastInside: 'panel',
   returnFocus: null,
   opener: null,
   hasNavigated: false,
@@ -81,6 +111,7 @@ export function reducer(state: State, action: Action): State {
       return {
         ...state,
         screen: action.screen,
+        lastInside: action.screen === 'home' ? state.lastInside : action.screen,
         opener,
         returnFocus: action.screen === 'panel' && fromDetail ? opener : null,
         hasNavigated: true,

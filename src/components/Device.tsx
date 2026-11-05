@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react'
+import { useCallback } from 'react'
 import roomUrl from '../assets/room.jpg'
 import { Appliances } from '../screens/Appliances'
 import { Cameras } from '../screens/Cameras'
@@ -44,15 +44,13 @@ function RoomBackground({ night }: { night: boolean }) {
 
 /** Control Panel + detail screens share one background and status bar. */
 function Inside({ night }: { night: boolean }) {
-  const { screen } = useStore()
-  // While this layer animates out to Home, keep showing the screen it had.
-  const last = useRef<Inner>('panel')
-  if (screen !== 'home') last.current = screen
+  // While this layer animates out to Home, it keeps showing the screen it had.
+  const { lastInside } = useStore()
   return (
     <div className="screen-fill">
       <RoomBackground night={night} />
       <ScreenTransition
-        screenKey={last.current}
+        screenKey={lastInside}
         depth={innerDepth}
         render={renderInner}
         variant="zoom"

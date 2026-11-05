@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { CameraIcon, LockIcon, ShieldIcon } from '../components/Icons'
 import { abs, DetailFrame, pos } from '../components/ui'
 import { useDispatch, useStore, type SecurityMode } from '../state/store'
-import { SECURITY_LABEL } from './ControlPanel'
+import { SECURITY_LABEL } from '../lib/design'
 import { useScreenFocus } from './useScreenFocus'
 
 

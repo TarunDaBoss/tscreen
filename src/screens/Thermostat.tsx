@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { DropletIcon, TriangleIcon, WindIcon } from '../components/Icons'
 import { abs, DegreeRing, DetailFrame, pos } from '../components/ui'
 import { TEMP_MAX, TEMP_MIN, useDispatch, useStore, type HvacMode, type ZoneId } from '../state/store'
-import { MODE_FILL, MODE_LABEL, ZONES } from './ControlPanel'
+import { MODE_FILL, MODE_LABEL, ZONES } from '../lib/design'
 import { useScreenFocus } from './useScreenFocus'
 
 

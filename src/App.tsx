@@ -27,11 +27,11 @@ function useViewport() {
 function useRealTimeTick() {
   const dispatch = useDispatch()
   useEffect(() => {
-    let last = new Date().getMinutes()
+    const clock = { minute: new Date().getMinutes() }
     const id = window.setInterval(() => {
       const m = new Date().getMinutes()
-      if (m !== last) {
-        last = m
+      if (m !== clock.minute) {
+        clock.minute = m
         dispatch({ type: 'tick' })
       }
     }, 1000)
