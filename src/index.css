@@ -1,0 +1,745 @@
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/600.css';
+
+/* ---------- Design tokens (from the Sketch file) ---------- */
+:root {
+  --bezel: #1a1919;
+  --bezel-stroke: #929292;
+  --screen-placeholder: #d8d8d8;
+  --text: #ffffff;
+  --glass: rgba(30, 30, 30, 0.62);
+  --round-btn: rgba(122, 121, 121, 0.3);
+  --tile-idle: rgba(0, 0, 0, 0.23);
+  --light-on: rgba(255, 255, 255, 0.4);
+  --light-off: rgba(0, 0, 0, 0.24);
+  --stroke-gray: #979797;
+  --disc: #d8d8d8;
+  --focus: #6fd3ff;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --s: 1;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  background: #0a1229;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--text);
+  overflow: hidden;
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Page layout & scaling ---------- */
+.app {
+  position: relative;
+  min-height: 100%;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.stage-wrap {
+  position: relative;
+  flex: none;
+}
+
+.stage {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1512px;
+  height: 982px;
+  transform-origin: 0 0;
+}
+
+.controls {
+  position: relative;
+  z-index: 1;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
+.narrow-note {
+  position: relative;
+  z-index: 1;
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* ---------- Sky ---------- */
+.sky {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+.sky-layer {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+}
+
+.sky-layer.is-active {
+  opacity: 1;
+}
+
+/* Warm glow behind the device when lights are on at night */
+.device-glow {
+  position: absolute;
+  left: 119px;
+  top: 72px;
+  width: 1274px;
+  height: 839px;
+  border-radius: 78px;
+  box-shadow:
+    0 0 90px 30px rgba(255, 176, 92, 0.45),
+    0 0 220px 90px rgba(255, 150, 60, 0.22);
+  transition: opacity 1.5s ease;
+  pointer-events: none;
+}
+
+/* ---------- Device frame ---------- */
+/* Bezel: 1266×831 at (123,76), radius 74, 8px #929292 stroke centered on the edge */
+.bezel {
+  position: absolute;
+  left: 119px;
+  top: 72px;
+  width: 1274px;
+  height: 839px;
+  border: 8px solid var(--bezel-stroke);
+  border-radius: 78px;
+  background: var(--bezel);
+}
+
+.screen {
+  position: absolute;
+  left: 174px;
+  top: 127px;
+  width: 1165px;
+  height: 728px;
+  border-radius: 35px;
+  overflow: hidden;
+  clip-path: inset(0 round 35px);
+  background: var(--screen-placeholder);
+  isolation: isolate;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bezel-home {
+  left: 696px;
+  top: 862px;
+  width: 120px;
+  height: 34px;
+  border-radius: 17px;
+  font-size: 20px;
+  line-height: 34px;
+  text-align: center;
+  color: var(--text);
+}
+
+.bezel-home:disabled {
+  cursor: default;
+}
+
+/* ---------- Base elements ---------- */
+.t {
+  position: absolute;
+  margin: 0;
+  line-height: 1.21; /* Inter's default line height, as Sketch uses it */
+  white-space: nowrap;
+  color: var(--text);
+  font-weight: inherit;
+}
+
+h1.t,
+h2.t {
+  font-weight: 600;
+}
+
+h1:focus {
+  outline: none;
+}
+
+.btn {
+  position: absolute;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+  touch-action: manipulation;
+}
+
+.btn .t {
+  pointer-events: none;
+}
+
+/* Clear, scale-independent focus ring (always ~3 real pixels) */
+.btn:focus-visible,
+input:focus-visible {
+  outline: calc(3px / var(--s)) solid var(--focus);
+  outline-offset: calc(3px / var(--s));
+}
+
+.screen-fill,
+.backdrop {
+  position: absolute;
+  inset: 0;
+}
+
+.bg-img {
+  object-fit: fill;
+  pointer-events: none;
+}
+
+.bg-img.night-room,
+.bg-img.night-home {
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+
+.bg-img.night-room {
+  filter: url(#night-room);
+}
+
+.bg-img.night-home {
+  filter: url(#night-home);
+}
+
+.bg-img.is-on {
+  opacity: 1;
+}
+
+/* Gradient overlays: black 0%→100% along the design's gradient vector, clipped to the screen */
+.gradient-home {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.059) 0%, rgba(0, 0, 0, 0.506) 100%);
+}
+
+.gradient-room {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.169) 0%, rgba(0, 0, 0, 0.491) 100%);
+}
+
+/* Glass card: #1E1E1E @ 62% + Sketch background blur (radius 6, saturation 146%) */
+.glass {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(6px) saturate(1.46);
+  backdrop-filter: blur(6px) saturate(1.46);
+}
+
+/* ---------- Home ---------- */
+.home {
+  touch-action: none;
+}
+
+.home-pill {
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.6);
+  box-shadow: inset 0 0 0 1px var(--stroke-gray);
+  color: #d6d6d6;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 37px;
+  text-align: center;
+  transition: background 0.2s;
+}
+
+.home-pill:hover {
+  background: rgba(0, 0, 0, 0.72);
+}
+
+.home-time {
+  position: static;
+  font-size: 138px;
+  font-weight: 600;
+}
+
+.home-ampm {
+  position: static;
+  font-size: 45px;
+  font-weight: 600;
+  margin-left: 20px; /* design: "AM" starts 392px after the time; "10:30" is 372px wide */
+  margin-top: 32px;
+}
+
+/* ---------- Status bar ---------- */
+.status-text {
+  font-size: 21px;
+  font-weight: 600;
+}
+
+/* ---------- Control Panel ---------- */
+.tile {
+  transition: background 0.3s ease, transform 0.15s ease;
+}
+
+.tile:active,
+.card-btn:active,
+.light:active,
+.mode-btn:active,
+.security-tile:active,
+.pill-btn:active,
+.round-btn:active {
+  transform: scale(0.97);
+}
+
+.card-btn {
+  transition: transform 0.15s ease;
+}
+
+.light {
+  border-radius: 50%;
+  background: var(--light-off);
+  transition: background 0.25s ease, transform 0.15s ease;
+}
+
+.light.is-on {
+  background: var(--light-on);
+}
+
+.light-icon {
+  transition: opacity 0.25s ease;
+}
+
+.light .light-sun,
+.light.is-on .light-moon {
+  opacity: 0;
+}
+
+.light.is-on .light-sun {
+  opacity: 1;
+}
+
+.light-label {
+  left: 50%;
+  top: 86.4484px;
+  width: 160px;
+  transform: translateX(-50%);
+  font-size: 17px;
+  text-align: center;
+  white-space: pre;
+}
+
+.appliance-disc {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--disc);
+  overflow: hidden;
+}
+
+.appliance-disc img {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* ---------- Switches ---------- */
+.switch {
+  transition: background 0.25s ease;
+}
+
+.switch-knob {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--disc);
+  transition: left 0.25s var(--ease);
+}
+
+/* ---------- Detail screens ---------- */
+.round-btn {
+  border-radius: 50%;
+  background: var(--round-btn);
+  transition: background 0.2s, transform 0.15s ease;
+}
+
+.round-btn:hover {
+  background: rgba(122, 121, 121, 0.45);
+}
+
+.round-btn[aria-disabled='true'] {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.mode-btn {
+  transition: background 0.25s ease, transform 0.15s ease;
+}
+
+.mode-text {
+  font-size: 35px;
+}
+
+.security-tile {
+  transition: background 0.25s ease, transform 0.15s ease;
+}
+
+.security-tile svg {
+  transition: stroke 0.25s ease;
+}
+
+.pill-btn {
+  border-radius: 20px;
+  background: var(--tile-idle);
+  transition: background 0.2s, transform 0.15s ease;
+}
+
+.pill-btn:hover,
+.mode-btn[aria-pressed='false']:hover,
+.security-tile[aria-pressed='false']:hover {
+  background: rgba(0, 0, 0, 0.32);
+}
+
+.emergency-ring {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px #ff0000;
+  color: #ff3636;
+  font-size: 29px;
+  line-height: 1;
+}
+
+.appliance-tile {
+  position: absolute;
+  border-radius: 50px;
+  background: rgba(0, 0, 0, 0.24);
+}
+
+.lock-tile {
+  position: absolute;
+  border-radius: 30px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.add-tile {
+  background: transparent;
+}
+
+.plus-disc {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--disc);
+  box-shadow: inset 0 0 0 1px var(--stroke-gray);
+}
+
+.plus-bar {
+  position: absolute;
+  left: 24.13px;
+  top: 38px;
+  width: 38.75px;
+  height: 10px;
+  background: var(--stroke-gray);
+}
+
+.plus-bar-v {
+  transform: rotate(90deg);
+}
+
+.tooltip {
+  position: absolute;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.tooltip-bubble {
+  display: block;
+  padding: 10px 18px;
+  border-radius: 14px;
+  background: rgba(20, 20, 20, 0.85);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.tooltip.is-open {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.camera-feed {
+  object-fit: cover;
+  border-radius: 25px;
+  box-shadow: inset 0 0 0 1px var(--stroke-gray);
+  outline: 1px solid var(--stroke-gray);
+  outline-offset: -1px;
+}
+
+.plain-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ---------- Emergency dialog ---------- */
+.dialog-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  animation: fade-in 0.2s ease both;
+}
+
+.dialog {
+  position: relative;
+  width: 520px;
+  padding: 44px 48px 40px;
+  border-radius: 31px;
+  text-align: center;
+  animation: pop-in 0.28s var(--ease) both;
+}
+
+.dialog .t {
+  position: static;
+  white-space: normal;
+}
+
+.dialog-alert {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 3px #ff0000;
+  color: #ff3636;
+  font-size: 44px;
+  line-height: 1;
+}
+
+.dialog-title {
+  margin-top: 18px;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.dialog-text {
+  margin-top: 10px;
+  font-size: 22px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.dialog-ok {
+  position: relative;
+  margin-top: 30px;
+  width: 200px;
+  height: 64px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.18);
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.dialog-ok:hover {
+  background: rgba(255, 255, 255, 0.26);
+}
+
+/* ---------- Screen transitions ---------- */
+.layer,
+.layer-content {
+  position: absolute;
+  inset: 0;
+}
+
+.layer.enter,
+.layer.exit,
+.layer.enter > .layer-content,
+.layer.exit > .layer-content {
+  animation-duration: 420ms;
+  animation-timing-function: var(--ease);
+  animation-fill-mode: both;
+}
+
+/* Control Panel ↔ detail: zoom + fade, like opening an app */
+.zoom.enter { animation-name: fade-in; }
+.zoom.exit { animation-name: fade-out; }
+.zoom.enter.fwd > .layer-content { animation-name: zoom-from-small; }
+.zoom.exit.fwd > .layer-content { animation-name: zoom-to-large; }
+.zoom.enter.back > .layer-content { animation-name: zoom-from-large; }
+.zoom.exit.back > .layer-content { animation-name: zoom-to-small; }
+
+/* Home ↔ Control Panel: lock screen slides up to reveal the panel */
+.unlock.exit.fwd,
+.unlock.enter.back {
+  z-index: 2;
+}
+.unlock.exit.fwd { animation-name: slide-up-out; }
+.unlock.enter.back { animation-name: slide-down-in; }
+.unlock.enter.fwd > .layer-content { animation-name: zoom-from-large; }
+.unlock.enter.fwd { animation-name: fade-in-soft; }
+.unlock.exit.back > .layer-content { animation-name: zoom-to-large; }
+
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fade-in-soft { from { opacity: 0.35; } to { opacity: 1; } }
+@keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes zoom-from-small { from { transform: scale(0.92); } to { transform: none; } }
+@keyframes zoom-to-small { from { transform: none; } to { transform: scale(0.92); } }
+@keyframes zoom-from-large { from { transform: scale(1.05); } to { transform: none; } }
+@keyframes zoom-to-large { from { transform: none; } to { transform: scale(1.05); } }
+@keyframes slide-up-out { from { transform: none; } to { transform: translateY(-100%); } }
+@keyframes slide-down-in { from { transform: translateY(-100%); } to { transform: none; } }
+@keyframes pop-in { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .layer,
+  .layer-content,
+  .dialog,
+  .dialog-backdrop {
+    animation-duration: 1ms !important;
+  }
+  .sky-layer,
+  .device-glow,
+  .bg-img {
+    transition-duration: 0.3s !important;
+  }
+}
+
+/* ---------- Time slider ---------- */
+.time-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(10, 14, 28, 0.35);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.time-end {
+  letter-spacing: 0.02em;
+}
+
+.time-readout {
+  min-width: 68px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: #fff;
+}
+
+.time-control input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: clamp(140px, 30vw, 300px);
+  height: 22px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.time-control input[type='range']:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 4px;
+  border-radius: 999px;
+}
+
+.time-control input[type='range']::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #ffffff var(--fill), rgba(255, 255, 255, 0.28) var(--fill));
+}
+
+.time-control input[type='range']::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.time-control input[type='range']::-moz-range-progress {
+  height: 4px;
+  border-radius: 2px;
+  background: #fff;
+}
+
+.time-control input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  margin-top: -7px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+
+.time-control input[type='range']::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+
+@media (max-width: 640px) {
+  .time-control {
+    gap: 8px;
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}
+
+/* Text that flows inside a flex row (temperature + degree ring) */
+.t.t-inline {
+  position: static;
+}
