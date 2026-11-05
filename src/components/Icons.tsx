@@ -109,7 +109,8 @@ export const CameraIcon = ({ w, h, color = '#fff', style }: IconProps) => (
 /** "Lock" symbol, drawn at the Smart Locks screen size (141.3×157) and scaled for other uses. */
 export const LockIcon = ({ w, h, color = '#fff', style }: IconProps) => (
   <svg width={w} height={h} viewBox="0 0 141.3 157" preserveAspectRatio="none" aria-hidden="true" focusable="false" style={style}>
-    <path d="M31.15 84 A39.5 39.5 0 0 1 110.15 84" fill="none" stroke={color} strokeWidth="5" />
+    {/* Shackle: the design's triangle with corner radius 70 renders as a dome on short straight legs */}
+    <path d="M32.15 80 V62 A39.5 20.5 0 0 1 111.15 62 V80" fill="none" stroke={color} strokeWidth="5" />
     <rect x="20.65" y="77.5" width="99.4" height="79.5" rx="12" fill={color} />
   </svg>
 )

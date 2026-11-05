@@ -49,10 +49,14 @@ export function Security() {
   const [emergencyOpen, setEmergencyOpen] = useState(false)
   const emergencyRef = useRef<HTMLButtonElement>(null)
 
-  const closeEmergency = () => {
-    setEmergencyOpen(false)
-    emergencyRef.current?.focus({ preventScroll: true })
-  }
+  const closeEmergency = () => setEmergencyOpen(false)
+
+  // Return focus to the Emergency button once the dialog is gone and the page is no longer inert.
+  const wasOpen = useRef(false)
+  useEffect(() => {
+    if (wasOpen.current && !emergencyOpen) emergencyRef.current?.focus({ preventScroll: true })
+    wasOpen.current = emergencyOpen
+  }, [emergencyOpen])
 
   return (
     <div className="screen-fill">

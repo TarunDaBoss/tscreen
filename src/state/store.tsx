@@ -22,6 +22,8 @@ export interface State {
   screen: ScreenId
   /** id of the element that opened the current screen, focused again on return */
   returnFocus: string | null
+  /** id of the Control Panel control that opened the current detail screen */
+  opener: string | null
   /** false until the visitor first navigates, so the page doesn't steal focus on load */
   hasNavigated: boolean
   lights: Record<LightId, boolean>
@@ -37,6 +39,7 @@ export interface State {
 export const initialState = (): State => ({
   screen: 'home',
   returnFocus: null,
+  opener: null,
   hasNavigated: false,
   lights: {
     living: true, kitchen: true, garage: false, master: false, office: true,
@@ -70,13 +73,19 @@ const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v
 
 export function reducer(state: State, action: Action): State {
   switch (action.type) {
-    case 'navigate':
+    case 'navigate': {
+      const isDetail = action.screen !== 'panel' && action.screen !== 'home'
+      const fromDetail = state.screen !== 'panel' && state.screen !== 'home'
+      // Remember which Control Panel control opened a detail screen, so Back can return focus to it.
+      const opener = isDetail ? (action.returnFocus ?? state.opener) : state.opener
       return {
         ...state,
         screen: action.screen,
-        returnFocus: action.returnFocus ?? null,
+        opener,
+        returnFocus: action.screen === 'panel' && fromDetail ? opener : null,
         hasNavigated: true,
       }
+    }
     case 'toggleLight':
       return { ...state, lights: { ...state.lights, [action.id]: !state.lights[action.id] } }
     case 'nudgeTemp': {
