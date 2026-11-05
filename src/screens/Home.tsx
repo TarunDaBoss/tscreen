@@ -1,8 +1,8 @@
 import { useRef } from 'react'
 import houseUrl from '../assets/home-house.jpg'
-import { NavigationIcon, SunIcon } from '../components/Icons'
+import { MoonIcon, NavigationIcon, SunIcon } from '../components/Icons'
 import { DegreeRing, pos, Text } from '../components/ui'
-import { clockParts, longDate, sceneDate } from '../lib/time'
+import { clockParts, longDate, sceneDate, skyStage } from '../lib/time'
 import { useDispatch, useStore } from '../state/store'
 import { useScreenFocus } from './useScreenFocus'
 
@@ -11,6 +11,7 @@ export function Home({ night }: { night: boolean }) {
   const dispatch = useDispatch()
   const { time, ampm } = clockParts(sceneMinutes)
   const date = longDate(sceneDate(sceneMinutes))
+  const isNightTime = skyStage(sceneMinutes) === 'night'
   const headingRef = useScreenFocus()
   const swipeStart = useRef<number | null>(null)
 
@@ -49,8 +50,11 @@ export function Home({ night }: { night: boolean }) {
       </Text>
 
       {/* Weather */}
-      <div role="group" aria-label="Weather: sunny, 49 degrees, Apex, North Carolina">
-        <SunIcon w={78} h={78} color="#FFB02F" style={pos(1039, 690)} />
+      <div role="group" aria-label={`Weather: ${isNightTime ? 'clear' : 'sunny'}, 49 degrees, Apex, North Carolina`}>
+        {/* Sun by day; the same icon slot shows a moon at night (time slider extension) */}
+        {isNightTime
+          ? <MoonIcon w={70} h={70} color="#FFB02F" style={pos(1043, 694)} />
+          : <SunIcon w={78} h={78} color="#FFB02F" style={pos(1039, 690)} />}
         <Text x={1127} y={678} size={91} weight={600}><span aria-hidden="true">49</span></Text>
         <DegreeRing size={19} border={4} style={pos(1253, 696)} />
         <Text x={961} y={782} size={30} style={{ whiteSpace: 'nowrap' }}><span aria-hidden="true">Apex, North Carolina</span></Text>
