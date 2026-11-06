@@ -1,10 +1,11 @@
-# Builds the app and publishes it to GitHub Pages on every push to main.
+# Optional alternative to Vercel: publishes the app to GitHub Pages.
+# Runs only when started by hand (Actions tab → Deploy to GitHub Pages → Run workflow),
+# so it never shows failed runs while you use Vercel.
+# To deploy on every push instead, add "push: branches: [main]" under "on:".
 # One-time setup: repo Settings → Pages → Build and deployment → Source: "GitHub Actions".
 name: Deploy to GitHub Pages
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:

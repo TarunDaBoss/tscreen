@@ -44,3 +44,7 @@ These were needed for a working app and follow the existing style:
 - **Weather icon** shows a moon instead of the sun at night.
 - **The "Tscreen" label** on the bezel works as a Home button.
 - **Date and time** use the visitor's real date. The time in the status bar is right-aligned to the design's right edge so it fits any time of day.
+- **Unlocking:** the Home pill now reads "Swipe up to unlock" (same pill style). An iPad-style home bar at the bottom of the screen bounces every few seconds as a hint.
+- **Speaker button** on the bezel (right of "Tscreen"): starts muted and shows a "Turn on sound" tooltip.
+- **Disarm keypad:** a glass panel in the card style with a 4-digit code and a "Demo code: 1234" hint.
+- **Appliance statuses:** "Brewing…" (`#FFB02F`), "Ready" (`#44E83D`) and "Cleaning…" (`#6FD3FF`). They show on the Control Panel card and under each switch on the Appliances screen.
