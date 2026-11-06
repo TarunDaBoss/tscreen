@@ -42,51 +42,28 @@ You can open the app on a specific screen and time. This is useful for embedding
 
 Valid screens: `home`, `panel`, `thermo-downstairs`, `thermo-upstairs`, `thermo-basement`, `security`, `appliances`, `cameras`, `locks`.
 
-## Put it online with Vercel (free)
+## Live site (GitHub Pages)
 
-You only do steps 1–3 once. After that, every `git push` goes live automatically.
+**https://tarundaboss.github.io/tscreen/**
 
-**1. Put the code on GitHub**
+Every push to `main` rebuilds and republishes the site automatically, using `.github/workflows/deploy-pages.yml`. It's live about a minute later. You can watch progress, or re-run a deploy by hand, in the repo's **Actions** tab. If a build fails, the previous version stays online.
 
-1. Sign in at [github.com](https://github.com) and click **New repository** (the **+** at the top right).
-2. Name it `tscreen`, leave it **Public** (or Private, Vercel's free plan works with both), and do **not** add a README, .gitignore or license. Click **Create repository**.
-3. In Terminal, push this project. Replace `YOUR-USERNAME`:
+To publish a change:
 
 ```bash
-cd "/Users/tarunbaskar/Desktop/Portfolio/Portfolio Projects/TScreen/tscreen-app"
-git remote add origin https://github.com/YOUR-USERNAME/tscreen.git
-git push -u origin main
+git add -A
+git commit -m "Describe the change"
+git push
 ```
 
-If Git asks for a password, use a GitHub personal access token, or sign in once with the GitHub Desktop app or `gh auth login`.
-
-**2. Connect Vercel to GitHub**
-
-1. Go to [vercel.com/signup](https://vercel.com/signup), choose **Hobby** (the free plan), and **Continue with GitHub**.
-2. Allow Vercel to access your GitHub account. When asked which repositories, you can pick **Only select repositories** → `tscreen`.
-
-**3. Import and deploy**
-
-1. In the Vercel dashboard click **Add New… → Project**.
-2. Find `tscreen` in the list and click **Import**.
-3. Vercel reads `vercel.json` and fills in **Framework: Vite**, **Build Command: `npm run build`**, **Output Directory: `dist`**. Leave **Root Directory** as it is (the repo root).
-4. Click **Deploy**. After about a minute you get a link like `https://tscreen-xxxx.vercel.app`.
-5. Optional: in **Project → Settings → Domains**, rename it to something like `tscreen.vercel.app`, or add your own domain.
-
-**4. Future changes go live automatically**
-
-- Every push to `main` triggers a new production deploy.
-- Pushes to other branches (or pull requests) get their own preview link, so you can check a change before merging it.
-- If a build fails, the previous version stays online and Vercel emails you.
-
-**5. Embed it in Framer**
+### Embed it in Framer
 
 1. In Framer, insert an **Embed** component and choose **URL**.
-2. Paste your Vercel link, or a deep link such as `https://tscreen.vercel.app/?screen=panel`.
+2. Paste `https://tarundaboss.github.io/tscreen/`, or a deep link such as `https://tarundaboss.github.io/tscreen/?screen=panel`.
 3. Size the embed to roughly 1512×982 (or any similar shape). The app scales itself to fit.
 4. Sound needs a click first (browsers block autoplay), which the speaker button provides.
 
-GitHub Pages also works: see `.github/workflows/deploy-pages.yml` for a manual-run alternative.
+`vercel.json` is kept in case you ever want to host on Vercel instead.
 
 ## Design fixes
 
