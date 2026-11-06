@@ -22,3 +22,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Original design source files (kept out of the repo)
+*.sketch
+Sketch Boards Export/
+Resources/
+
+# Local tooling
+.claude/
+.vercel
