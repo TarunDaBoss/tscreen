@@ -834,3 +834,106 @@ input:focus-visible {
   opacity: 1;
   transform: translate(-50%, 0);
 }
+
+/* ---------- Disarm keypad (same glass style as the cards) ---------- */
+.keypad-backdrop {
+  flex-direction: column;
+}
+
+.keypad-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.keypad {
+  width: 440px;
+  padding: 30px 40px 32px;
+  border-radius: 31px;
+  text-align: center;
+  background: rgba(30, 30, 30, 0.86);
+  -webkit-backdrop-filter: blur(24px) saturate(1.46);
+  backdrop-filter: blur(24px) saturate(1.46);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  animation: pop-in 0.28s var(--ease) both;
+}
+
+.keypad-title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.21;
+}
+
+.keypad-dots {
+  display: flex;
+  justify-content: center;
+  gap: 22px;
+  margin-top: 22px;
+}
+
+.keypad-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px #fff;
+  transition: background 0.12s ease;
+}
+
+.keypad-dot.is-filled {
+  background: #fff;
+}
+
+.keypad-error {
+  height: 26px;
+  margin: 10px 0 8px;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 26px;
+  color: #ff3636;
+}
+
+.keypad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 92px);
+  justify-content: center;
+  gap: 14px 26px;
+}
+
+.keypad-key {
+  position: relative;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: var(--round-btn);
+  font-size: 38px;
+  font-weight: 400;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, transform 0.1s ease;
+}
+
+.keypad-key:hover {
+  background: rgba(122, 121, 121, 0.45);
+}
+
+.keypad-key:active {
+  transform: scale(0.94);
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.keypad-text {
+  background: transparent;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.keypad-hint {
+  margin: 14px 0 0;
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+

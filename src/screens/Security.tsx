@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { CameraIcon, LockIcon, ShieldIcon } from '../components/Icons'
+import { Keypad } from '../components/Keypad'
 import { abs, DetailFrame, pos } from '../components/ui'
 import { useDispatch, useStore, type SecurityMode } from '../state/store'
 import { SECURITY_LABEL } from '../lib/design'
@@ -46,21 +47,31 @@ export function Security() {
   const { security } = useStore()
   const dispatch = useDispatch()
   const headingRef = useScreenFocus()
-  const [emergencyOpen, setEmergencyOpen] = useState(false)
+  const [overlay, setOverlay] = useState<'none' | 'emergency' | 'keypad'>('none')
   const emergencyRef = useRef<HTMLButtonElement>(null)
+  const disarmRef = useRef<HTMLButtonElement>(null)
+  const overlayOpen = overlay !== 'none'
 
-  const closeEmergency = () => setEmergencyOpen(false)
-
-  // Return focus to the Emergency button once the dialog is gone and the page is no longer inert.
-  const wasOpen = useRef(false)
+  // Return focus to the control that opened the overlay once the page is no longer inert.
+  const lastOverlay = useRef(overlay)
   useEffect(() => {
-    if (wasOpen.current && !emergencyOpen) emergencyRef.current?.focus({ preventScroll: true })
-    wasOpen.current = emergencyOpen
-  }, [emergencyOpen])
+    const was = lastOverlay.current
+    if (was !== 'none' && overlay === 'none') {
+      ;(was === 'emergency' ? emergencyRef : disarmRef).current?.focus({ preventScroll: true })
+    }
+    lastOverlay.current = overlay
+  }, [overlay])
+
+  const choose = (mode: SecurityMode) => {
+    if (mode === security) return
+    // Arming needs no code (like real panels); disarming asks for the code first.
+    if (mode === 'disarmed') setOverlay('keypad')
+    else dispatch({ type: 'setSecurity', mode })
+  }
 
   return (
     <div className="screen-fill">
-      <div inert={emergencyOpen} aria-hidden={emergencyOpen || undefined}>
+      <div inert={overlayOpen} aria-hidden={overlayOpen || undefined}>
         <DetailFrame title="Security System" headingRef={headingRef}>
           <div role="group" aria-label="Security mode">
             {TILES.map((t) => {
@@ -68,10 +79,12 @@ export function Security() {
               return (
                 <button
                   key={t.mode}
+                  ref={t.mode === 'disarmed' ? disarmRef : undefined}
                   type="button"
                   className="btn security-tile"
                   aria-pressed={selected}
-                  onClick={() => dispatch({ type: 'setSecurity', mode: t.mode })}
+                  aria-haspopup={t.mode === 'disarmed' && !selected ? 'dialog' : undefined}
+                  onClick={() => choose(t.mode)}
                   style={{ ...pos(t.x, 348, 309, 309), borderRadius: 50, background: selected ? t.selectedFill : 'rgba(0, 0, 0, 0.25)' }}
                 >
                   <ShieldIcon w={205.76} h={209} color={selected ? t.selectedShield : t.shield} style={abs(51.12, 25)} />
@@ -97,7 +110,7 @@ export function Security() {
             type="button"
             className="btn pill-btn"
             aria-haspopup="dialog"
-            onClick={() => setEmergencyOpen(true)}
+            onClick={() => setOverlay('emergency')}
             style={pos(605, 704, 302, 75)}
           >
             <span className="emergency-ring" aria-hidden="true" style={abs(47, 17, 40, 40)}>!</span>
@@ -115,7 +128,16 @@ export function Security() {
           </button>
         </DetailFrame>
       </div>
-      {emergencyOpen && <EmergencyDialog onClose={closeEmergency} />}
+      {overlay === 'emergency' && <EmergencyDialog onClose={() => setOverlay('none')} />}
+      {overlay === 'keypad' && (
+        <Keypad
+          onCancel={() => setOverlay('none')}
+          onSuccess={() => {
+            dispatch({ type: 'setSecurity', mode: 'disarmed' })
+            setOverlay('none')
+          }}
+        />
+      )}
     </div>
   )
 }
