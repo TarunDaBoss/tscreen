@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import roomUrl from '../assets/room.jpg'
 import { Appliances } from '../screens/Appliances'
 import { Cameras } from '../screens/Cameras'
@@ -8,6 +8,7 @@ import { Locks } from '../screens/Locks'
 import { Security } from '../screens/Security'
 import { Thermostat } from '../screens/Thermostat'
 import { useDispatch, useStore, type ScreenId } from '../state/store'
+import { VolumeOffIcon, VolumeOnIcon } from './Icons'
 import { StatusBar } from './StatusBar'
 import { ScreenTransition } from './Transition'
 import { pos } from './ui'
@@ -87,6 +88,34 @@ export function Device({ night }: { night: boolean }) {
       >
         Tscreen
       </button>
+      <SoundButton />
+    </>
+  )
+}
+
+/** Speaker button on the bezel (not in the design). Starts muted; the choice lasts while the page is open. */
+function SoundButton() {
+  const { soundOn } = useStore()
+  const dispatch = useDispatch()
+  const [tip, setTip] = useState(false)
+  const label = soundOn ? 'Turn off sound' : 'Turn on sound'
+  const Icon = soundOn ? VolumeOnIcon : VolumeOffIcon
+  return (
+    <>
+      <button
+        type="button"
+        className="btn bezel-sound"
+        aria-label={label}
+        aria-pressed={soundOn}
+        onClick={() => dispatch({ type: 'toggleSound' })}
+        onMouseEnter={() => setTip(true)}
+        onMouseLeave={() => setTip(false)}
+        onFocus={() => setTip(true)}
+        onBlur={() => setTip(false)}
+      >
+        <Icon w={24} h={24} color={soundOn ? '#FFFFFF' : '#BDBDBD'} />
+      </button>
+      <span className={`bezel-tip ${tip ? 'is-open' : ''}`} aria-hidden="true">{label}</span>
     </>
   )
 }

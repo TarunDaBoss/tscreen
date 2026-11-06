@@ -26,3 +26,11 @@ export const ZONES: { id: ZoneId; name: string; y: number; tempX: number; labelX
   { id: 'basement', name: 'Basement', y: 553, tempX: 63, labelX: 70, labelY: 81, screen: 'thermo-basement' },
 ]
 
+
+/** Appliance status text colors (not in the design; "Off" keeps the design's white). */
+export const STATUS_COLOR: Record<string, string> = {
+  Off: '#FFFFFF',
+  'Brewing…': '#FFB02F',
+  Ready: '#44E83D',
+  'Cleaning…': '#6FD3FF',
+}

@@ -35,6 +35,10 @@ export interface State {
   locks: Record<LockId, boolean>
   goodnight: boolean
   sceneMinutes: number
+  /** Sound starts off; the choice lasts while the page is open */
+  soundOn: boolean
+  /** Coffee shows "Brewing…" for 4 seconds after it turns on, then "Ready" */
+  coffeeReady: boolean
 }
 
 const SCREENS: ScreenId[] = [
@@ -85,6 +89,8 @@ export const initialState = (): State => fromUrl({
   locks: { front: false, back: false },
   goodnight: false,
   sceneMinutes: realSceneMinutes(),
+  soundOn: false,
+  coffeeReady: false,
 })
 
 export type Action =
@@ -98,6 +104,8 @@ export type Action =
   | { type: 'toggleGoodnight' }
   | { type: 'setTime'; minutes: number }
   | { type: 'tick' }
+  | { type: 'toggleSound' }
+  | { type: 'coffeeReady' }
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v))
 
@@ -140,7 +148,16 @@ export function reducer(state: State, action: Action): State {
     case 'setSecurity':
       return { ...state, security: action.mode }
     case 'toggleAppliance':
-      return { ...state, appliances: { ...state.appliances, [action.id]: !state.appliances[action.id] } }
+      return {
+        ...state,
+        appliances: { ...state.appliances, [action.id]: !state.appliances[action.id] },
+        // Turning the coffee machine on (or off) restarts the brew.
+        coffeeReady: action.id === 'coffee' ? false : state.coffeeReady,
+      }
+    case 'coffeeReady':
+      return state.appliances.coffee ? { ...state, coffeeReady: true } : state
+    case 'toggleSound':
+      return { ...state, soundOn: !state.soundOn }
     case 'toggleLock':
       return { ...state, locks: { ...state.locks, [action.id]: !state.locks[action.id] } }
     case 'toggleGoodnight':

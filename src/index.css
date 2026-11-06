@@ -747,3 +747,58 @@ input:focus-visible {
 .t.t-inline {
   position: static;
 }
+
+/* Appliance status ("Brewing…", "Cleaning…") gently pulses while busy */
+.status-pulse {
+  animation: status-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status-pulse { animation: none; }
+}
+
+/* Speaker button on the bezel, right of the "Tscreen" label, level with it */
+.bezel-sound {
+  left: 1293px;
+  top: 859px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.bezel-sound:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.bezel-tip {
+  position: absolute;
+  left: 1315px;
+  top: 806px;
+  z-index: 5;
+  transform: translate(-50%, 6px);
+  padding: 8px 14px;
+  border-radius: 12px;
+  background: rgba(20, 20, 20, 0.9);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.bezel-tip.is-open {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}

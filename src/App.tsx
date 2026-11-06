@@ -1,6 +1,7 @@
 import { useEffect, useState, type CSSProperties } from 'react'
 import { Device } from './components/Device'
 import { Sky } from './components/Sky'
+import { useHomeEffects } from './lib/useHomeEffects'
 import { clockLabel, SLIDER_MAX, SLIDER_MIN, skyStage } from './lib/time'
 import { StoreProvider, useDispatch, useStore } from './state/store'
 
@@ -110,6 +111,7 @@ function Scene() {
   const { sceneMinutes, goodnight, lights } = useStore()
   const { w, h } = useViewport()
   useRealTimeTick()
+  useHomeEffects()
 
   const stage = skyStage(sceneMinutes)
   const nightTime = stage === 'night'

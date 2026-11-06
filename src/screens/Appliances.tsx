@@ -1,12 +1,23 @@
 import coffeeUrl from '../assets/coffee-machine.png'
 import vacuumUrl from '../assets/robot-vacuum.png'
-import { abs, AddTile, DetailFrame, pos, Switch } from '../components/ui'
+import { abs, AddTile, DetailFrame, pos, Switch, Text } from '../components/ui'
+import { STATUS_COLOR } from '../lib/design'
+import { coffeeStatus, vacuumStatus } from '../lib/useHomeEffects'
 import { useDispatch, useStore } from '../state/store'
 import { useScreenFocus } from './useScreenFocus'
 
+/** Status line under a switch (not in the design): live text so it also works with sound off. */
+function Status({ x, text, label }: { x: number; text: string; label: string }) {
+  const busy = text.endsWith('…')
+  return (
+    <Text x={x} y={752} w={330} size={20} align="center" style={{ color: STATUS_COLOR[text] }}>
+      <span className={busy ? 'status-pulse' : undefined} role="status" aria-label={`${label}: ${text}`}>{text}</span>
+    </Text>
+  )
+}
 
 export function Appliances() {
-  const { appliances } = useStore()
+  const { appliances, coffeeReady } = useStore()
   const dispatch = useDispatch()
   const headingRef = useScreenFocus()
 
@@ -27,6 +38,7 @@ export function Appliances() {
           onChange={() => dispatch({ type: 'toggleAppliance', id: 'coffee' })}
           label="Coffee Machine power"
         />
+        <Status x={240} text={coffeeStatus(appliances.coffee, coffeeReady)} label="Coffee Machine" />
 
         {/* Vacuum */}
         <section aria-label="Vacuum" className="appliance-tile" style={pos(593, 293, 330, 495)}>
@@ -43,6 +55,7 @@ export function Appliances() {
           onChange={() => dispatch({ type: 'toggleAppliance', id: 'vacuum' })}
           label="Vacuum power"
         />
+        <Status x={593} text={vacuumStatus(appliances.vacuum)} label="Vacuum" />
 
         <AddTile
           x={946} y={293} w={330} h={495} radius={50} border={5} opacity={0.51}

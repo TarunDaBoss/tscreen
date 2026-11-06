@@ -8,6 +8,8 @@ import {
   useDispatch, useStore, type HvacMode, type LightId, type ScreenId,
 } from '../state/store'
 import { MODE_FILL, MODE_LABEL, SECURITY_COLOR, SECURITY_LABEL, SECURITY_SHIELD, ZONES } from '../lib/design'
+import { coffeeStatus, vacuumStatus } from '../lib/useHomeEffects'
+import { STATUS_COLOR } from '../lib/design'
 import { useScreenFocus } from './useScreenFocus'
 
 const LIGHTS: { id: LightId; name: string; label?: string; x: number; y: number }[] = [
@@ -79,7 +81,9 @@ function LightButton({ light }: { light: (typeof LIGHTS)[number] }) {
 }
 
 export function ControlPanel() {
-  const { security, appliances, goodnight } = useStore()
+  const { security, appliances, goodnight, coffeeReady } = useStore()
+  const coffee = coffeeStatus(appliances.coffee, coffeeReady)
+  const vacuum = vacuumStatus(appliances.vacuum)
   const dispatch = useDispatch()
   const headingRef = useScreenFocus()
   const go = (screen: ScreenId, returnFocus: string) => dispatch({ type: 'navigate', screen, returnFocus })
@@ -140,7 +144,7 @@ export function ControlPanel() {
         type="button"
         id="card-appliances"
         className="btn glass card-btn"
-        aria-label={`Appliances: Coffee Machine ${appliances.coffee ? 'On' : 'Off'}, Vacuum ${appliances.vacuum ? 'On' : 'Off'}. Open.`}
+        aria-label={`Appliances: Coffee Machine ${coffee}, Vacuum ${vacuum}. Open.`}
         onClick={() => go('appliances', 'card-appliances')}
         style={{ ...pos(783, 583, 516, 255), borderRadius: 31 }}
       >
@@ -151,13 +155,13 @@ export function ControlPanel() {
           <img src={coffeeUrl} alt="" style={abs(22.2167, 21.8583, 85.2833, 85.2833)} draggable={false} />
         </span>
         <span className="t" aria-hidden="true" style={{ ...abs(0, 196, 236), fontSize: 16, textAlign: 'center' }}>Coffee Machine</span>
-        <span className="t" aria-hidden="true" style={{ ...abs(0, 221, 236), fontSize: 11, textAlign: 'center' }}>{appliances.coffee ? 'On' : 'Off'}</span>
+        <span className="t" aria-hidden="true" style={{ ...abs(0, 221, 236), fontSize: 11, textAlign: 'center', color: STATUS_COLOR[coffee] }}>{coffee}</span>
 
         <span className="appliance-disc" style={abs(229.5, 58, 129, 129)}>
           <img src={vacuumUrl} alt="" style={abs(14.5, 24.5, 101, 101)} draggable={false} />
         </span>
         <span className="t" aria-hidden="true" style={{ ...abs(176, 196, 236), fontSize: 16, textAlign: 'center' }}>Vacuum</span>
-        <span className="t" aria-hidden="true" style={{ ...abs(176, 221, 236), fontSize: 11, textAlign: 'center' }}>{appliances.vacuum ? 'On' : 'Off'}</span>
+        <span className="t" aria-hidden="true" style={{ ...abs(176, 221, 236), fontSize: 11, textAlign: 'center', color: STATUS_COLOR[vacuum] }}>{vacuum}</span>
 
         <ChevronRightIcon w={53} h={53} style={abs(409, 101)} />
       </button>
